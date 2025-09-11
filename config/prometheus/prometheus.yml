@@ -1,0 +1,41 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter on monitoring VM
+  - job_name: 'monitoring-node'
+    static_configs:
+      - targets: ['192.168.20.102:9100']
+
+  # Node Exporter on web server
+  - job_name: 'web-server-node'
+    static_configs:
+      - targets: ['192.168.20.100:9100']
+
+  # Node Exporter on database server
+  - job_name: 'database-node'
+    static_configs:
+      - targets: ['192.168.20.101:9100']
+
+  # Web application metrics (if we add them later)
+  - job_name: 'webapp'
+    static_configs:
+      - targets: ['192.168.20.100:3000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # PostgreSQL metrics (if we add postgres_exporter later)
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['192.168.20.101:9187']
+    scrape_interval: 30s

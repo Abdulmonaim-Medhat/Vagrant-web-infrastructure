@@ -33,3 +33,34 @@ echo "PostgreSQL setup completed!"
 echo "Database: webapp_db"
 echo "User: webapp_user"
 echo "Access from: 192.168.20.0/24 network"
+
+echo "=== Installing Node Exporter for monitoring ==="
+
+# Download and install Node Exporter
+cd /tmp
+wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+tar xvf node_exporter-1.5.0.linux-amd64.tar.gz
+cp node_exporter-1.5.0.linux-amd64/node_exporter /usr/local/bin/
+rm -rf node_exporter-1.5.0.linux-amd64*
+
+# Create node_exporter service
+cat > /etc/systemd/system/node_exporter.service << 'NODE_SERVICE'
+[Unit]
+Description=Node Exporter
+After=network.target
+
+[Service]
+User=vagrant
+Group=vagrant
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target
+NODE_SERVICE
+
+systemctl daemon-reload
+systemctl start node_exporter
+systemctl enable node_exporter
+
+echo "Node Exporter installed on database server"
